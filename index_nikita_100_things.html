@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080c1a">
+<title>100 Things About You</title>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#020309}
+  body{font-family:Georgia,"Times New Roman",serif;color:#f4edde}
+  canvas{display:block;width:100%;height:100%;touch-action:manipulation}
+  .hint{position:fixed;right:14px;bottom:12px;font:10px/1.3 Arial,sans-serif;letter-spacing:.16em;color:rgba(205,189,156,.48);pointer-events:none}
+</style>
+</head>
+<body>
+<canvas id="scene" aria-label="Animated sequence of one hundred thoughtful statements"></canvas>
+<div class="hint">100 THINGS ABOUT YOU</div>
+<script>
+const STATEMENTS = [
+  "FIRST OF ALL I LOVE YOU NIKITA, FAR MORE THAN YOU KNOW...",
+  "YOU MAKE MY DAY SO SPECIAL JUST BY TALKING TO ME...",
+  "I LOVE TALKING TO YOU...",
+  "I'M GLAD OUR PATHS CROSSED...",
+  "Your presence has a charm of its own...",
+  "You don't have to try so hard to be special...",
+  "I adore the way you express yourself...",
+  "I love when you share things with me...",
+  "Whenever you act childish, i even love that side of your's more...",
+  "You have a personality I could never get bored of...",
+  "I love how you can be both spicy and sweet...",
+  "You are mature enough to understand what is good and what is wrong for you...",
+  "Your little dramatic moments are unforgettable...",
+  "Being yourself is already enough...",
+  "Sometimes I got jealous, idk but I can't even control it...",
+  "I guess my only weakness is my emotions...",
+  "I notice the little things about you...",
+  "I get very excited when you send voice notes to me...",
+  "Even your silly messages can make my day...",
+  "Your unexpected messages are always a pleasant surprise...",
+  "I love your random conversations...",
+  "Your reactions are sometimes my favourite part...",
+  "I really try to remember the little things you tell me...",
+  "I wish you could see yourself through my eyes...",
+  "Your typing style has its own personality...",
+  "You have a beauty that doesn't need an explanation...",
+  "Your eyes have a way of holding attention...",
+  "I really love your pretty eyes, they are soo attractive...",
+  "Your smile deserves its own appreciation...",
+  "Even you look like an fallen Angel from heaven...🤌🏻 ❤️‍🩹",
+  "You look beautiful without even trying...",
+  "Your pictures always make me pause for a moment...",
+  "You carry your own kind of elegance...",
+  "Using your wallpaper always provide a love sensation to my heart when I see it...",
+  "Your beauty is more than just appearance...",
+  "You're effortlessly captivating...",
+  "I hope you never underestimate how beautiful you are...",
+  "Even your simplest looks have their charm...",
+  "I can't describe how beautiful are you...",
+  "Your beauty can be described by the number of boys that likes you...",
+  "You give me reasons to look forward to tomorrow...",
+  "Sometimes your words pushes me forward in life to achieve something...",
+  "Talking to you can turn an ordinary day around...",
+  "You make me appreciate little moments...",
+  "You do notice my efforts... 😭💗",
+  "You have become someone I genuinely look forward to hearing from...",
+  "Sometimes You make my heart feel a little softer or sometimes full of sorrow...",
+  "Sometimes a single notification from you is enough...",
+  "And sometimes talking to you full night isn't enough...",
+  "I find myself remembering our conversations...",
+  "You bring a different kind of happiness into my days...",
+  "You're one of my favourite unexpected surprises...",
+  "I admire your individuality...",
+  "You deserve to be appreciated for who you are...",
+  "I hope you never lose your creativity...",
+  "You deserve people who listen to understand...",
+  "I admire the little world you've created for yourself...",
+  "Never let anyone make you feel ordinary...",
+  "I wish you endless reasons to smile...",
+  "I hope life treats your heart gently...",
+  "I genuinely wish that you get healthy perfectly...",
+  "I hope your dreams find their way to you...",
+  "I wish you peaceful nights and beautiful mornings...",
+  "I hope you always find reasons to believe in yourself...",
+  "You deserve happiness that doesn't come with conditions...",
+  "I hope you never feel alone in difficult moments...",
+  "I wish you could see how much potential you have...",
+  "May you always have something beautiful to look forward to...",
+  "I hope you receive the same kindness you give...",
+  "Meeting you was my fate...",
+  "Somehow, you became someone I wanted to know better...",
+  "I cherish the conversations we've shared...",
+  "I like discovering new things about you...",
+  "Every conversation gives me another little memory...",
+  "I wouldn't trade the chance of knowing you for anything ordinary...",
+  "I'm glad I got to meet the person behind the screen...",
+  "You made an unexpected chapter worth reading...",
+  "I hope we create many more beautiful memories.",
+  "I'm happy that, somehow, I found you...",
+  "Sometimes I have more feelings than words...",
+  "You inspire thoughts I never knew how to express...",
+  "I could write a hundred things and still leave something unsaid... Fr 😭",
+  "You're not someone I want to describe with ordinary words...",
+  "There's a softness in the way I think about you...",
+  "I don't need perfect moments to appreciate you...",
+  "Even silence doesn't make you less special... I love you and will keep Loving you 💗",
+  "You don't have to be happy every second to be appreciated...",
+  "I hope you always feel comfortable being yourself...",
+  "You matter beyond what you can do for anyone...",
+  "I want you to be honest with me everytime we talk... ❤️‍🩹",
+  "If I could wish for something, it would be your happiness...",
+  "I hope your heart finds the peace it deserves...",
+  "May your parents love you more than you deserve 😭💗",
+  "I don't want you to rush your healing... From your ex...",
+  "Your past doesn't take away the beauty of your future...",
+  "I don't expect you to become someone you're not.",
+  "I'm grateful for you, regardless of what tomorrow brings...",
+  "If I had another hundred wishes, I'd still wish good things for you.",
+  "Out of all the things I could wish for on 11/11, you were the one on my mind... 😭💖",
+  "And if I had to make that wish again, it would still be you. ❤️"
+];
+const canvas = document.getElementById("scene");
+const ctx = canvas.getContext("2d", { alpha:false });
+const C = {
+  top:[8,12,26], bottom:[2,3,9], ivory:"#f4edde",
+  champagne:"#cdbd9c", gold:"#c9a356", bright:"#eccb80", amber:"#ffb252"
+};
+let W=0,H=0,DPR=1, t=0, last=0, index=-1, phase=-2.6, duration=5, count=0, sweep=0;
+let revealed = new Set(), particles=[], trails=[], rows=[];
+const rowSpecs=[
+  {y:.16,size:13,speed:-24,alpha:.55,serif:false,italic:false},
+  {y:.205,size:19,speed:31,alpha:.67,serif:true,italic:true},
+  {y:.265,size:25,speed:-18,alpha:.82,serif:true,italic:false,big:true},
+  {y:.72,size:14,speed:27,alpha:.59,serif:false},
+  {y:.775,size:20,speed:-38,alpha:.68,serif:true,italic:true},
+  {y:.84,size:26,speed:20,alpha:.83,serif:true,big:true},
+  {y:.9,size:13,speed:-30,alpha:.55,serif:false}
+];
+const plain=s=>s.replace(/\*/g,"");
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+function resize(){
+  DPR=Math.min(devicePixelRatio||1,2);
+  W=innerWidth; H=innerHeight;
+  canvas.width=Math.round(W*DPR); canvas.height=Math.round(H*DPR);
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  buildRows(); buildParticles();
+}
+function font(size,serif=true,italic=false,bold=false){
+  return `${italic?"italic ":""}${bold?"bold ":""}${size}px ${serif?'Georgia, "Times New Roman", serif':'Arial, sans-serif'}`;
+}
+function drawMarkup(text,x,y,size,alpha=1,align="center"){
+  const pieces=text.split(/(\*[^*]+\*)/g).filter(Boolean);
+  ctx.save();ctx.globalAlpha=alpha;ctx.textAlign=align;ctx.textBaseline="middle";
+  let runs=[];
+  for(const p of pieces){
+    const hot=p.startsWith("*")&&p.endsWith("*");
+    const s=hot?p.slice(1,-1):p;
+    ctx.font=font(size,true,false,hot);
+    runs.push({s,hot,w:ctx.measureText(s).width});
+  }
+  const total=runs.reduce((a,b)=>a+b.w,0);
+  let px=x-(align==="center"?total/2:0);
+  for(const r of runs){
+    ctx.font=font(size,true,false,r.hot);
+    ctx.fillStyle=r.hot?C.bright:C.ivory;
+    ctx.shadowColor=r.hot?"rgba(236,203,128,.38)":"transparent";
+    ctx.shadowBlur=r.hot?8:0;
+    ctx.textAlign="left";ctx.fillText(r.s,px,y);px+=r.w;
+  }
+  ctx.restore();
+}
+function buildRows(){
+  rows=rowSpecs.map((s,ri)=>{
+    let pool=STATEMENTS.map((v,i)=>({v,i})).sort((a,b)=>plain(a.v).length-plain(b.v).length);
+    let selected;
+    if(s.big) selected=pool.slice(0,12);
+    else selected=pool.slice(12+(ri*13)%40,12+(ri*13)%40+14);
+    selected.sort(()=>Math.random()-.5);
+    const gap=70+s.size*2;
+    let x=0;
+    const items=selected.map(o=>{
+      ctx.font=font(s.size,s.serif,s.italic);
+      const w=ctx.measureText(plain(o.v)).width;
+      const item={...o,x,w};x+=w+gap;return item;
+    });
+    return {...s,items,length:x,scroll:Math.random()*x};
+  });
+}
+function buildParticles(){
+  particles=Array.from({length:48},()=>({x:Math.random()*W,y:Math.random()*H,
+    vx:(Math.random()-.5)*13,phase:Math.random()*6.28,speed:.4+Math.random()}));
+  trails=Array.from({length:8},()=>({x:Math.random()*W,y:H*(.15+Math.random()*.72),
+    len:100+Math.random()*170,vx:(Math.random()-.5)*210,alpha:.2+Math.random()*.35}));
+}
+function startNext(){
+  index=(index+1)%100;phase=0;count=Math.min(index+1,100);revealed.add(index);
+  const n=plain(STATEMENTS[index]).length;
+  duration=Math.max(4.6,Math.min(6.4,3.8+.034*n));
+}
+function background(){
+  const g=ctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0,"#080c1a");g.addColorStop(1,"#020309");
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  const glow=ctx.createRadialGradient(W/2,H*.51,10,W/2,H*.51,Math.max(W,H)*.55);
+  glow.addColorStop(0,"rgba(26,24,28,.48)");glow.addColorStop(1,"rgba(0,0,0,0)");
+  ctx.fillStyle=glow;ctx.fillRect(0,0,W,H);
+}
+function draw(){
+  background();
+  const cx=W/2, scale=Math.min(W/1200,H/800);
+  // central atmospheric light
+  const amb=ctx.createRadialGradient(cx,H*.51,0,cx,H*.51,W*.45);
+  amb.addColorStop(0,`rgba(255,170,70,${.055+.018*Math.sin(t*.55)})`);
+  amb.addColorStop(1,"rgba(255,170,70,0)");
+  ctx.fillStyle=amb;ctx.fillRect(0,H*.28,W,H*.45);
+  // framing rules
+  ctx.strokeStyle="rgba(201,163,86,.55)";ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(cx-W*.32,H*.33);ctx.lineTo(cx+W*.32,H*.33);
+  ctx.moveTo(cx-W*.32,H*.68);ctx.lineTo(cx+W*.32,H*.68);ctx.stroke();
+
+  // drifting text bands
+  rows.forEach(row=>{
+    row.scroll+=row.speed*(1/60);
+    const y=row.y*H;
+    ctx.save();ctx.beginPath();ctx.rect(0,y-row.size*1.8,W,row.size*3.6);ctx.clip();
+    for(const it of row.items){
+      let x=(it.x+row.scroll)%(row.length+W)-it.w;
+      if(x>W||x+it.w<0)continue;
+      const lit=revealed.has(it.i);
+      ctx.globalAlpha=row.alpha*(lit?1:.13);
+      ctx.font=font(row.size,row.serif,row.italic);
+      ctx.textAlign="left";ctx.textBaseline="middle";
+      ctx.fillStyle=lit?C.ivory:C.champagne;
+      ctx.fillText(plain(it.v),x,y);
+    }
+    ctx.restore();
+  });
+  // moving light streaks
+  trails.forEach(a=>{
+    a.x+=a.vx/60;
+    if(a.x>W+220)a.x=-a.len;if(a.x<-a.len-20)a.x=W+20;
+    const lg=ctx.createLinearGradient(a.x,a.y,a.x+a.len,a.y);
+    lg.addColorStop(0,"rgba(255,178,82,0)");
+    lg.addColorStop(.5,`rgba(255,178,82,${a.alpha})`);
+    lg.addColorStop(1,"rgba(255,178,82,0)");
+    ctx.strokeStyle=lg;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(a.x+a.len,a.y);ctx.stroke();
+  });
+  // featured statement
+  if(index>=0){
+    const fi=Math.min(1,phase/1.2),fo=Math.min(1,(duration-phase)/1);
+    const fade=Math.max(0,Math.min(1,1-Math.pow(1-fi,3),fo*fo*(3-2*fo)));
+    const size=Math.max(23,Math.min(42,W*.038));
+    const words=STATEMENTS[index];
+    const maxW=W*.82;
+    ctx.save();ctx.globalAlpha=fade;
+    ctx.textAlign="center";ctx.textBaseline="middle";
+    // Wrap by words, preserving highlighted keyword markers.
+    const tokens=words.match(/\*[^*]+\*|\S+/g)||[];
+    let lines=[],line="",lineW=0;
+    for(const token of tokens){
+      const txt=token.replace(/\*/g," ");
+      ctx.font=font(size,true,false,token.startsWith("*"));
+      const ww=ctx.measureText(txt+" ").width;
+      if(line && lineW+ww>maxW){lines.push(line.trim());line="";lineW=0;}
+      line+=token+" ";lineW+=ww;
+    }
+    if(line)lines.push(line.trim());
+    const lh=size*1.42, start=H*.515-(lines.length-1)*lh/2;
+    ctx.shadowColor="rgba(255,178,82,.35)";ctx.shadowBlur=18;
+    lines.forEach((ln,i)=>drawMarkup(ln,cx,start+i*lh,size,fade));
+    ctx.shadowBlur=0;
+    // number and gold side rules
+    const ny=H*.37;
+    ctx.font=font(13,false,false,true);ctx.fillStyle=C.bright;ctx.textAlign="center";
+    ctx.fillText(String(index+1).padStart(3,"0"),cx,ny);
+    ctx.strokeStyle=`rgba(201,163,86,${fade*.8})`;
+    ctx.beginPath();ctx.moveTo(cx-95,ny);ctx.lineTo(cx-30,ny);ctx.moveTo(cx+30,ny);ctx.lineTo(cx+95,ny);ctx.stroke();
+    ctx.restore();
+  }
+  // heading
+  ctx.save();ctx.textAlign="center";ctx.textBaseline="middle";
+  const titleSize=Math.min(27,W*.027);
+  ctx.font=font(titleSize,true,false,false);ctx.shadowColor="rgba(255,178,82,.5)";ctx.shadowBlur=12;
+  ctx.fillStyle=C.ivory;ctx.fillText("100 THINGS ABOUT YOU",cx,H*.075);
+  ctx.shadowBlur=0;ctx.strokeStyle="rgba(201,163,86,.65)";
+  ctx.beginPath();ctx.moveTo(cx-W*.23,H*.123);ctx.lineTo(cx+W*.23,H*.123);ctx.stroke();
+  ctx.restore();
+  // progress
+  const left=28,right=W-28,py=H-25;
+  ctx.strokeStyle="rgba(80,78,78,.48)";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(left,py);ctx.lineTo(right,py);ctx.stroke();
+  ctx.strokeStyle=C.gold;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(left,py);ctx.lineTo(left+(right-left)*count/100,py);ctx.stroke();
+  ctx.font=font(10,false,false,true);ctx.textAlign="left";ctx.fillStyle=C.champagne;
+  ctx.fillText("STATEMENTS APPEARED",left,H-39);
+  ctx.textAlign="right";ctx.fillStyle=C.bright;ctx.fillText(`${String(count).padStart(3,"0")} / 100`,right,H-39);
+  // subtle dust
+  particles.forEach(p=>{
+    p.x+=p.vx/60;if(p.x<0)p.x=W;if(p.x>W)p.x=0;
+    const a=.12+.18*(.5+.5*Math.sin(t*p.speed+p.phase));
+    ctx.fillStyle=`rgba(255,222,170,${a})`;
+    ctx.beginPath();ctx.arc(p.x,p.y+Math.sin(t*.5+p.phase)*4,1.1,0,Math.PI*2);ctx.fill();
+  });
+  // continuous soft light sweep
+  const sx=((t*115)%(W+420))-210;
+  const sg=ctx.createLinearGradient(sx-100,0,sx+100,0);
+  sg.addColorStop(0,"rgba(255,178,82,0)");sg.addColorStop(.5,"rgba(255,178,82,.035)");sg.addColorStop(1,"rgba(255,178,82,0)");
+  ctx.fillStyle=sg;ctx.fillRect(sx-100,0,200,H);
+}
+function frame(now){
+  if(!last)last=now;
+  const dt=Math.min((now-last)/1000,.05);last=now;t+=dt;phase+=dt;
+  if(index<0){if(phase>=0)startNext();}
+  else if(phase>=duration)startNext();
+  draw();requestAnimationFrame(frame);
+}
+addEventListener("resize",resize);
+canvas.addEventListener("click",()=>{if(index>=0)startNext();});
+resize();requestAnimationFrame(frame);
+</script>
+</body>
+</html>
